@@ -61,3 +61,17 @@ Execution OrderBook::buildExecution(int &tradeQty, const Order &ask,
 
   return execution;
 };
+double OrderBook::bestBid(const std::string &symbol) {
+  if (bids_[symbol].empty()) {
+    return 0.0;
+  } else {
+    return bids_[symbol].begin()->first;
+  }
+}
+double OrderBook::bestAsk(const std::string &symbol) {
+  if (asks_[symbol].empty()) {
+    return 0.0;
+  } else {
+    return asks_[symbol].begin()->first;
+  }
+}
