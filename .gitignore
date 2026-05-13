@@ -3,5 +3,5 @@
 build/*
 cmake-build-*/
 .cache/
-.DS-Store
-compile_command.json
+.DS_Store
+compile_commands.json
