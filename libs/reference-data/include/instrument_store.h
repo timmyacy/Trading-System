@@ -1,3 +1,4 @@
+#pragma once
 #include "instrument.h"
 #include <optional>
 #include <string>
