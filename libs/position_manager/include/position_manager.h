@@ -8,9 +8,9 @@ class PositionManager {
 public:
   void onExecution(const Execution &exec);
 
-  Position getPosition(const std::string &symbol);
+  Position getPosition(const std::string &symbol) const;
 
-  std::unordered_map<std::string, Position> &all();
+  const std::unordered_map<std::string, Position> &all() const;
 
 private:
   std::unordered_map<std::string, Position> positions_;
