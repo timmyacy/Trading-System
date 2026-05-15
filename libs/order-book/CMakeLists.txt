@@ -1,6 +1,6 @@
 
-add_library(order-book
-    src/order-book.cpp
+add_library(order_book
+    src/order_book.cpp
 )
 
-target_include_directories(order-book PUBLIC include)
+target_include_directories(order_book PUBLIC include)
