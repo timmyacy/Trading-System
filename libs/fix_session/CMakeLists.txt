@@ -3,3 +3,4 @@ add_library(fix_session
 )
 
 target_include_directories(fix_session PUBLIC include)
+target_link_libraries(fix_session PUBLIC order_book)

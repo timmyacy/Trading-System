@@ -9,11 +9,11 @@ void PositionManager::onExecution(const Execution &exec) {
 
   if (exec.side == Side::BUY) {
 
-    position.quantity += exec.quantity;
-    double newAvgPrice = ((exec.quantity * exec.trade_price) +
-                          (position.quantity * position.averageEntryPrice)) /
-                         position.quantity;
+    double newAvgPrice = ((position.quantity * position.averageEntryPrice) +
+                          (exec.quantity * exec.trade_price)) /
+                         (position.quantity + exec.quantity);
 
+    position.quantity += exec.quantity;
     position.averageEntryPrice = newAvgPrice;
   }
 

@@ -1,23 +1,30 @@
+#include "fix_session_reader.h"
 #include "instrument_store.h"
+#include "order_book.h"
+#include "position_manager.h"
 #include <iostream>
 
 int main() {
   InstrumentStore store;
+  store.loadFromCSV("config/instruments.csv");
 
-  try {
-    store.loadFromCSV("config/instruments.csv");
-  } catch (const std::exception &e) {
-    std::cerr << "Error: " << e.what() << "\n";
-    return 1;
+  OrderBook orderBook;
+  PositionManager positionManager;
+
+  orderBook.setExecutionCallback(
+      [&](Execution exec) { positionManager.onExecution(exec); });
+
+  FixSessionReader fixReader;
+  fixReader.setOrderCallback(
+      [&](Order order) { orderBook.acceptNewOrder(order); });
+
+  fixReader.start("config/orders.fix");
+
+  for (const auto &[symbol, pos] : positionManager.all()) {
+    std::cout << symbol << "  qty=" << pos.quantity
+              << "  avg=" << pos.averageEntryPrice
+              << "  pnl=" << pos.realisedPnl << "\n";
   }
-  std::cout << "Loaded " << store.size() << " instruments\n";
 
-  auto &aapl = store.lookup("AAPL");
-  std::cout << aapl.symbol << " " << aapl.currency << "\n";
-
-  auto &opt = store.lookup("AAPL240119C150");
-  std::cout << opt.symbol << " strike: " << opt.strike.value() << "\n";
-
-  auto &fut = store.lookup("ESZ4");
-  std::cout << fut.symbol << " contractSize: " << fut.contractSize << "\n";
+  return 0;
 }
