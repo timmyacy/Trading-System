@@ -1,3 +1,4 @@
+#pragma once
 #include "tick.h"
 #include <functional>
 #include <string>

@@ -1,3 +1,4 @@
+#pragma once
 #include "market_dispatcher.h"
 #include <atomic>
 
