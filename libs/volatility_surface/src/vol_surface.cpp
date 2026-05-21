@@ -9,16 +9,20 @@ void VolatilitySurface::loadFromCSV(const string &path) {
   string line;
   getline(file, line);
 
-  vector<string> fields;
-  stringstream ss(line);
-  string token;
-  while (getline(ss, token, ',')) {
-    fields.push_back(token);
+  while (getline(file, line)) {
+    vector<string> fields;
+    stringstream ss(line);
+    string token;
+    while (getline(ss, token, ',')) {
+      fields.push_back(token);
+    }
+    if (fields.size() < 3)
+      continue;
+    double strike = std::stod(fields[0]);
+    int expiry = std::stoi(fields[1]);
+    double vol = std::stod(fields[2]);
+    volatilities_[strike][expiry] = vol;
   }
-  double strike = std::stod(fields[0]);
-  int expiry = std::stoi(fields[1]);
-  double vol = std::stod(fields[2]);
-  volatilities_[strike][expiry] = vol;
 }
 
 double VolatilitySurface::getVol(double strike, int expiry) {
