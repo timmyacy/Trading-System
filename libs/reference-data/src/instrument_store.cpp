@@ -30,12 +30,19 @@ void InstrumentStore::loadFromCSV(const string &filePath) {
     inst.tickSize = stod(fields[4]);
     inst.contractSize = stod(fields[5]);
 
-    inst.strike =
-        fields[6].empty() ? nullopt : optional<double>{stod(fields[6])};
-    inst.optionType = parseOptionType(fields[7]);
-    inst.optionStyle = parseOptionStyle(fields[8]);
-    inst.underlying = fields[9].empty() ? nullopt : optional<string>{fields[9]};
-    inst.expiry = parseDate(fields[10]);
+    inst.strike = (fields.size() > 6 && !fields[6].empty())
+                      ? optional<double>{stod(fields[6])}
+                      : nullopt;
+
+    inst.optionType = fields.size() > 7 ? parseOptionType(fields[7]) : nullopt;
+    inst.optionStyle =
+        fields.size() > 8 ? parseOptionStyle(fields[8]) : nullopt;
+
+    inst.underlying = (fields.size() > 9 && !fields[9].empty())
+                          ? optional<string>{fields[9]}
+                          : nullopt;
+
+    inst.expiry = fields.size() > 10 ? parseDate(fields[10]) : nullopt;
 
     instruments_[inst.symbol] = inst;
   }
@@ -74,12 +81,17 @@ optional<OptionStyle> InstrumentStore::parseOptionStyle(const string &s) {
 }
 
 optional<chrono::year_month_day> InstrumentStore::parseDate(const string &s) {
-  if (s.empty())
+
+  string trimmed = s;
+  trimmed.erase(0, trimmed.find_first_not_of(" \t\r\n"));
+  trimmed.erase(trimmed.find_last_not_of(" \t\r\n") + 1);
+
+  if (trimmed.empty() || trimmed.size() < 10)
     return nullopt;
 
-  int y = stoi(s.substr(0, 4));
-  int m = stoi(s.substr(5, 2));
-  int d = stoi(s.substr(8, 2));
+  int y = stoi(trimmed.substr(0, 4));
+  int m = stoi(trimmed.substr(5, 2));
+  int d = stoi(trimmed.substr(8, 2));
 
   return chrono::year{y} / chrono::month{static_cast<unsigned>(m)} /
          chrono::day{static_cast<unsigned>(d)};

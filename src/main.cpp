@@ -42,6 +42,7 @@ int main() {
   dispatcher.subscribe("GOOGL", [&](Tick t) { riskEngine.onTick(t); });
   dispatcher.subscribe("TSLA", [&](Tick t) { riskEngine.onTick(t); });
   dispatcher.subscribe("ESZ4", [&](Tick t) { riskEngine.onTick(t); });
+  dispatcher.subscribe("GBPUSD", [&](Tick t) { riskEngine.onTick(t); });
 
   UDPFeedSubscriber subscriber;
   std::thread udpThread([&]() { subscriber.start(9000, dispatcher); });
