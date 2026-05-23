@@ -28,14 +28,17 @@ int main() {
 
   RiskEngine riskEngine(positionManager, volSurface);
 
-  orderBook.setExecutionCallback(
-      [&](Execution exec) { positionManager.onExecution(exec); });
-
   FixSessionReader fixReader;
-  fixReader.setOrderCallback(
-      [&](Order order) { orderBook.acceptNewOrder(order); });
+  fixReader.setOrderCallback([&](Order order) {
+    Execution exec{};
+    exec.symbol = order.symbol;
+    exec.quantity = order.quantity;
+    exec.trade_price = order.price;
+    exec.side = (order.order_type == OrderType::BUY) ? Side::BUY : Side::SELL;
+    exec.arrival = std::chrono::system_clock::now();
+    positionManager.onExecution(exec);
+  });
   fixReader.start("config/orders.fix");
-
   MarketDispatcher dispatcher;
   dispatcher.subscribe("AAPL", [&](Tick t) { riskEngine.onTick(t); });
   dispatcher.subscribe("MSFT", [&](Tick t) { riskEngine.onTick(t); });
